@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,6 +48,18 @@ public class ApiGatewayController {
 	public ResponseEntity<String> criarCliente(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
 			@RequestBody String body) {
 		return gatewayClient.postToGateway("/gateway/clientes", authorization, body);
+	}
+
+	@GetMapping("/funcionarios")
+	public ResponseEntity<String> listarFuncionarios(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
+		return gatewayClient.getToGateway("/gateway/funcionarios", authorization);
+	}
+
+	@GetMapping("/vendas")
+	public ResponseEntity<String> listarVendas(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+			@RequestParam String inicio,
+			@RequestParam String fim) {
+		return gatewayClient.getToGateway("/gateway/vendas", authorization, "?inicio=" + inicio + "&fim=" + fim);
 	}
 
 	@GetMapping("/catalogo/itens")

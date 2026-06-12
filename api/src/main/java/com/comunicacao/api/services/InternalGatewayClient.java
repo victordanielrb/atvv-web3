@@ -33,6 +33,10 @@ public class InternalGatewayClient {
 		return exchange(gatewayLojaUrl + path, HttpMethod.GET, authorization, null);
 	}
 
+	public ResponseEntity<String> getToGateway(String path, String authorization, String query) {
+		return exchange(gatewayLojaUrl + path + query, HttpMethod.GET, authorization, null);
+	}
+
 	public ResponseEntity<String> postToGateway(String path, String authorization, String body) {
 		return exchange(gatewayLojaUrl + path, HttpMethod.POST, authorization, body);
 	}

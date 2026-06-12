@@ -16,6 +16,7 @@ import com.comunicacao.auth.dto.TokenValidationResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
@@ -37,7 +38,7 @@ public class JwtService {
 		byte[] decoded;
 		try {
 			decoded = Decoders.BASE64.decode(rawSecret);
-		} catch (IllegalArgumentException exception) {
+		} catch (DecodingException exception) {
 			decoded = rawSecret.getBytes(StandardCharsets.UTF_8);
 		}
 		this.signingKey = decoded;

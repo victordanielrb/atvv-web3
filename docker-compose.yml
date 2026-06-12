@@ -1,13 +1,11 @@
-version: "3.9"
-
 services:
   api:
     build:
       context: ./api
     environment:
       SERVER_PORT: 8080
-      AUTH_SERVICE_URL: http://auth:8080
-      GATEWAY_LOJA_URL: http://gateway-loja:8080
+      AUTH_SERVICE_URL: http://host.docker.internal:8081
+      GATEWAY_LOJA_URL: http://host.docker.internal:8082
     depends_on:
       auth:
         condition: service_started
@@ -37,13 +35,13 @@ services:
       context: ./gateway-loja
     environment:
       SERVER_PORT: 8080
-      AUTH_SERVICE_URL: http://auth:8080
-      EMPRESA_SERVICE_URL: http://empresa-service:8080
-      CLIENTE_SERVICE_URL: http://cliente-service:8080
-      FUNCIONARIO_SERVICE_URL: http://funcionario-service:8080
-      VENDA_SERVICE_URL: http://venda-service:8080
-      CATALOGO_SERVICE_URL: http://catalogo-service:8080
-      INVENTARIO_SERVICE_URL: http://inventario-service:8080
+      AUTH_SERVICE_URL: http://host.docker.internal:8081
+      EMPRESA_SERVICE_URL: http://host.docker.internal:8083
+      CLIENTE_SERVICE_URL: http://host.docker.internal:8084
+      FUNCIONARIO_SERVICE_URL: http://host.docker.internal:8085
+      VENDA_SERVICE_URL: http://host.docker.internal:8086
+      CATALOGO_SERVICE_URL: http://host.docker.internal:8087
+      INVENTARIO_SERVICE_URL: http://host.docker.internal:8088
     depends_on:
       auth:
         condition: service_started
