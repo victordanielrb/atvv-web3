@@ -1,0 +1,227 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ./api
+    environment:
+      SERVER_PORT: 8080
+      AUTH_SERVICE_URL: http://auth:8080
+      GATEWAY_LOJA_URL: http://gateway-loja:8080
+    depends_on:
+      auth:
+        condition: service_started
+      gateway-loja:
+        condition: service_started
+    ports:
+      - "8080:8080"
+
+  auth:
+    build:
+      context: ./auth
+    environment:
+      SERVER_PORT: 8080
+      JWT_SECRET: super-secret-jwt-key-for-local-development-only
+      JWT_EXPIRATION_SECONDS: 3600
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-db:5432/auth
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+
+  gateway-loja:
+    build:
+      context: ./gateway-loja
+    environment:
+      SERVER_PORT: 8080
+      AUTH_SERVICE_URL: http://auth:8080
+      EMPRESA_SERVICE_URL: http://empresa-service:8080
+      CLIENTE_SERVICE_URL: http://cliente-service:8080
+      FUNCIONARIO_SERVICE_URL: http://funcionario-service:8080
+      VENDA_SERVICE_URL: http://venda-service:8080
+      CATALOGO_SERVICE_URL: http://catalogo-service:8080
+      INVENTARIO_SERVICE_URL: http://inventario-service:8080
+    depends_on:
+      auth:
+        condition: service_started
+      empresa-service:
+        condition: service_started
+      cliente-service:
+        condition: service_started
+      catalogo-service:
+        condition: service_started
+      inventario-service:
+        condition: service_started
+    ports:
+      - "8082:8080"
+
+  empresa-service:
+    build:
+      context: ./empresa-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://empresa-db:5432/empresa
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      empresa-db:
+        condition: service_healthy
+    ports:
+      - "8083:8080"
+
+  cliente-service:
+    build:
+      context: ./cliente-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://cliente-db:5432/cliente
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      cliente-db:
+        condition: service_healthy
+    ports:
+      - "8084:8080"
+
+  funcionario-service:
+    build:
+      context: ./funcionario-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://funcionario-db:5432/funcionario
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      funcionario-db:
+        condition: service_healthy
+    ports:
+      - "8085:8080"
+
+  venda-service:
+    build:
+      context: ./venda-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://venda-db:5432/venda
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      venda-db:
+        condition: service_healthy
+    ports:
+      - "8086:8080"
+
+  catalogo-service:
+    build:
+      context: ./catalogo-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://catalogo-db:5432/catalogo
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      catalogo-db:
+        condition: service_healthy
+    ports:
+      - "8087:8080"
+
+  inventario-service:
+    build:
+      context: ./inventario-service
+    environment:
+      SERVER_PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://inventario-db:5432/inventario
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      inventario-db:
+        condition: service_healthy
+    ports:
+      - "8088:8080"
+
+  empresa-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: empresa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d empresa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cliente-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cliente
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cliente"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  funcionario-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: funcionario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d funcionario"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  venda-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: venda
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d venda"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  catalogo-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: catalogo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d catalogo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inventario-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: inventario
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d inventario"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d auth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
